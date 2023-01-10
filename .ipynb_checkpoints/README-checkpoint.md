@@ -188,7 +188,7 @@ A resposta será uma "lista" com "URLs" das imagens solicitadas.
 
 **Conclusão**
 
-Somente para registro, para escrever este artigo eu gastei \\$0.75 dos \\$18.00 que ganhei para teste da API. São ferramente muito interessantes e certamente permitirão "insight" importantes para o desenvolvimento de todos.
+Somente para registro, para escrever este artigo eu gastei \$0.75 dos \$18.00 que ganhei para teste da API. São ferramente muito interessantes e certamente permitirão "insight" importantes para o desenvolvimento de todos.
 
 Gratidão
 
@@ -197,7 +197,3 @@ Gratidão
 
 **Referências:**<p>
 [1] [https://beta.openai.com/](https://beta.openai.com/) 
-
-```python
-
-```
