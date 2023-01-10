@@ -4,7 +4,7 @@
 Este artigo foi elaborado organizando perguntas e respostas obtidas via [ChatGPT](https://beta.openai.com/playground?mode=complete) e requisições diretas à API [OpenAI API](https://beta.openai.com/docs/api-reference/introduction) via Jupyter Notebook. 
 Concluiremos com exemplos de códigos para implementação em Python de requisições à OpenAI API para obter:
 - Respostas para perguntas aleatórias;
-- Imagens criadas por IA com base em textos.
+- Imagens criadas por IA a partir de descrições.
 
 
 **ChatGPT**
@@ -58,115 +58,145 @@ Não, os dados do Linkedin não são adequados para treinamento do OpenAI API. O
 ChatGPT e OpenAI API são ferramentas essenciais para a inovação na Inteligência Artificial. Ao usar essas tecnologias, os desenvolvedores podem criar chatbots mais precisos e humanos, o que melhora a experiência dos usuários. No entanto, é importante que os desenvolvedores tomem precauções ao usar essas tecnologias, como garantir que o chatbot seja seguro e que forneça respostas precisas. Ao usar ChatGPT e OpenAI API em conjunto, os desenvolvedores podem criar chatbots mais inovadores e avançados.
 
 
-**Códigos**
+**Código exemplo para envio de "perguntas"**
 
 ```python
+# Instale os pacotes requeridos.
+# !pip install requests,json,openai
 import requests,json,openai
-```
 
-```python
 # Para gerar o token cadastre-se em (https://beta.openai.com/account/api-keys)
-token = openai.api_key = "Bearer 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"
-```
+# Token de acesso
+# Atenção: Não permita que o seu token seja descoberto, neste caso esse token
+# já foi revogado (cancelado)
+token = openai.api_key = "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"
 
-```python
+# Endpoint do OpenAI API a cada requisição enviada uma resposta é retornada.
+# https://beta.openai.com/docs/api-reference/completions
 url = "https://api.openai.com/v1/completions"
-```
 
-```python
+# Cabeçalho com formato e o token de acesso. O Token é passado via Header no POST
 headers = {
   'Content-Type': 'application/json',
-  'Authorization': 'Bearer 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'
+  'Authorization': 'Bearer ' + str(token)
 }
-```
 
-```python
+# OpenAI API aceita as requisições com atributos formatados em JSON
+# Atributos: Model: text-davinci-003 é o ID do modelo a ser usado.
+#            Prompt: Entrada de dados, neste atributo você envia a sua "pergunta".
+# Você pode usar a modelos de lista API de para ver todos os seus 
+# modelos disponíveis ou consultar nossa visão geral do modelo para obter 
+# as descrições deles. 
+# https://beta.openai.com/docs/models/overview
+
 payload = json.dumps({
   "model": "text-davinci-003",
-  "prompt": "Escreva introdução para artigo que fala a respeito de OpenAI API e ChatGPT",
+  "prompt": "Defina fórmula de Bhaskara e exemplifique.",
   "temperature": 0,
   "max_tokens": 2048
 })
-```
 
-```python
+# Envio da requisição
 response = requests.request("POST", url, headers=headers, data=payload)
+# Formatando a resposta
+resposta = json.loads(response.text)
 ```
 
+**Resposta da API OpenAI API**
+
 ```python
-df = json.loads(response.text)
+# resposta.keys()
+# dict_keys(['id', 'object', 'created', 'model', 'choices', 'usage'])
+# resposta['choices'][0].keys()
+# dict_keys(['text', 'index', 'logprobs', 'finish_reason'])
+
+print(resposta['choices'][0]['text'])
 ```
 
-```python
-df.keys()
-```
+![](img/bhaskara.png)
+
+
+**Código exemplo para geração de imagens com base em uma descrição textual**
 
 ```python
+# Instale os pacotes requeridos.
+import requests,json,openai
 
-```
+# Para gerar o token cadastre-se em (https://beta.openai.com/account/api-keys)
+# Token de acesso
+# Atenção: Não permita que o seu token seja descoberto, neste caso esse token
+# já foi revogado (cancelado)
+token = openai.api_key = "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"
 
-```python
+# Endpoint do OpenAI API a cada requisição enviada uma resposta é retornada.
+# https://beta.openai.com/docs/api-reference/images
 url = "https://api.openai.com/v1/images/generations"
-```
 
-```python
+# Cabeçalho com formato e o token de acesso. O Token é passado via Header no POST
+headers = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + str(token)
+}
+
+# OpenAI API aceita as requisições com atributos formatados em JSON
+# Atributos: Prompt: Entrada de dados, descreva o que deseja que a IA desenhe".
+#                 n: Quantidade de repetições
+#              size: Tamanho das imagens (1024, 512 ou 256)
+# https://beta.openai.com/docs/models/overview
+
 payload = json.dumps({
   "prompt": "Desenhe um fundo de tela que represente o que significa OpenAI API e ChatGPT",
   "n": 3,
   "size": "1024x1024"
 })
-```
 
-```python
 response = requests.request("POST", url, headers=headers, data=payload)
+resposta = json.loads(response.text)
 ```
 
 ```python
-df = json.loads(response.text)
+# resposta.keys()
+# resposta['data']
 ```
 
-```python
-df.keys()
-```
-
-### Desenhe uma casa branca, com uma árvore e um céu azul, com nuvens brancas e aves voando
-
-```python
-df['data']
-```
-
-[{'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-CXkuazTlxSPYzQapElW2AF4M.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=alPqeXAXf4wFanHH8ixuzCcas0t/FS5CUF2mMBZp52g%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-GWfAaLJDKA8N4Cxz4r9RpgeQ.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=Xi6Ixbw%2B6kNuESotFhgr7wQkxS3EJP97HbERAfd4bDg%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-d0w5vGAYLzOnbkr5wnbZLbRN.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=uOeIHXB7/oj%2B8XjKTst5aGZmBUIic0GQ5OExTed2Xto%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-humyHte5b3LuGFrpKF5nXBNz.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=TrKIlkuuMQeX%2Bd6VV2Nk3PSEDayLvND4KbVGPdDvvXU%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-ymT5Fu2XjhZKVFDXE5jX99G0.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=wPIMv9HgJfUdjmvZdtua4N/bJx1bazc4jS608Z0Alp4%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-Er7cSsNlTmJZY2DwYG9hoOLU.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=eX0Rzl0i4mgCfAxScY8IOPKsKqW8V3iUzcRtzOY191E%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-vZLuAFMTJFxpQuNOGN8ljsrR.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=1EZgaeh434NxcyUwBn3hyc61X2GYslWw93C7HoosCIw%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-9IocJsnXiDWyO4Z9w55JizhZ.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=o6Nm/4vp3P19GAQTJWwaj/v%2BSeD/rGPIUbDOGIeh9VA%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-DcqaB2RKgTQMYXCWmMHyweDK.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=aOcf9fdfv0GZdRznm65V0bus5aiU8/l1wYNL2K81kPw%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-iQZuZ2g2IlLTN65EpFV6qKVw.png?st=2023-01-09T21%3A56%3A45Z&se=2023-01-09T23%3A56%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T21%3A12%3A39Z&ske=2023-01-10T21%3A12%3A39Z&sks=b&skv=2021-08-06&sig=zhEB4sE1PJur1QSioMW8zDtidxIYjKzeRHiC8j7WETs%3D'}]
+A resposta será uma "lista" com "URLs" das imagens solicitadas.
 
 
-### Desenhe uma capa para um artigo que fala a respeito de OpenIA, ChatGPT e Tecnologia.
-
-```python
-df['data']
-```
-
-[{'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-OHC6kkmWkfr0enuOnNRCwAIw.png?st=2023-01-09T22%3A11%3A36Z&se=2023-01-10T00%3A11%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T19%3A24%3A36Z&ske=2023-01-10T19%3A24%3A36Z&sks=b&skv=2021-08-06&sig=ak4UfsO9JSB7xOKms1GM7tE0O7jN0/TS3uX76rsbubo%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-emBWvBbMpqp4fgzygBB9yKvL.png?st=2023-01-09T22%3A11%3A36Z&se=2023-01-10T00%3A11%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T19%3A24%3A36Z&ske=2023-01-10T19%3A24%3A36Z&sks=b&skv=2021-08-06&sig=JmNfA7uI4449ylIwOuvcJRkQd6UR%2BzVp5CA8gTqCnNU%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-SxlHTnjHi8luFbEMMzcf1d0d.png?st=2023-01-09T22%3A11%3A36Z&se=2023-01-10T00%3A11%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T19%3A24%3A36Z&ske=2023-01-10T19%3A24%3A36Z&sks=b&skv=2021-08-06&sig=UG/S61nbH2NVMlzS5SKhG7ycDJQqBLj584VnGhz6bPU%3D'}]
+**Solicitações**:
 
 
-### Desenhe um fundo de tela que represente o que significa OpenAI API e ChatGPT
+1. Desenhe uma casa branca, com uma árvore e um céu azul, com nuvens brancas e aves voando;
 
-```python
-df['data']
-```
+**Resposta**
 
-[{'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-5mXepDkcMpKXbjXsJiM000Sd.png?st=2023-01-09T22%3A15%3A36Z&se=2023-01-10T00%3A15%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T20%3A32%3A30Z&ske=2023-01-10T20%3A32%3A30Z&sks=b&skv=2021-08-06&sig=E7lqdV2DFjdlKIQ0bzyRIos2ri2dz2gGgBwGDYuTrLc%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-yfCeoD0UxVMbOXwAnW5RGvAD.png?st=2023-01-09T22%3A15%3A36Z&se=2023-01-10T00%3A15%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T20%3A32%3A30Z&ske=2023-01-10T20%3A32%3A30Z&sks=b&skv=2021-08-06&sig=PWAh%2BWLom2FX1Uy6ACFCA1cq%2Bbxo9qJBD/2coAHZEzE%3D'},
- {'url': 'https://oaidalleapiprodscus.blob.core.windows.net/private/org-7FoyzXPtgPrSoxwHakbEG667/user-a0FVNqzRRLgdzcyK0uncb4hy/img-9jgwrowiiQzpc0G77hrEFA82.png?st=2023-01-09T22%3A15%3A36Z&se=2023-01-10T00%3A15%3A36Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-01-09T20%3A32%3A30Z&ske=2023-01-10T20%3A32%3A30Z&sks=b&skv=2021-08-06&sig=WNq19uVaXdzAhGFpvNcIJtROVzFrnrd7oez00pk2APw%3D'}]
+![](img/1.png)
+
+
+2. Desenhe uma ilustração para um artigo que fala a respeito de OpenIA, ChatGPT e Tecnologia;
+
+**Resposta**
+
+![](img/2.png)
+
+
+3. Desenhe um fundo de tela que represente o que significa OpenAI API e ChatGPT.
+
+**Resposta**
+
+![](img/3.png)
+
+
+**Conclusão**
+
+Somente para registro, para escrever este artigo eu gastei \\$0.75 dos \\$18.00 que ganhei para teste da API. São ferramente muito interessantes e certamente permitirão "insight" importantes para o desenvolvimento de todos.
+
+Gratidão
+
+[Carlos Eugênio](https://github.com/carlosemsantana)
+
+
+**Referências:**<p>
+[1] [https://beta.openai.com/](https://beta.openai.com/) 
 
 ```python
 
