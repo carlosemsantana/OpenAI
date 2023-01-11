@@ -67,8 +67,8 @@ import requests,json,openai
 
 # Para gerar o token cadastre-se em (https://beta.openai.com/account/api-keys)
 # Token de acesso
-# Atenção: Não permita que o seu token seja descoberto, neste caso esse token
-# já foi revogado (cancelado)
+# Atenção: Não permita que o seu token seja descoberto, neste exemplo esse token
+#          já foi revogado (cancelado)
 token = openai.api_key = "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"
 
 # Endpoint do OpenAI API a cada requisição enviada uma resposta é retornada.
@@ -124,8 +124,8 @@ import requests,json,openai
 
 # Para gerar o token cadastre-se em (https://beta.openai.com/account/api-keys)
 # Token de acesso
-# Atenção: Não permita que o seu token seja descoberto, neste caso esse token
-# já foi revogado (cancelado)
+# Atenção: Não permita que o seu token seja descoberto, neste exemplo esse token
+#          já foi revogado (cancelado)
 token = openai.api_key = "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"
 
 # Endpoint do OpenAI API a cada requisição enviada uma resposta é retornada.
